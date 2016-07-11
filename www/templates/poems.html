@@ -1,0 +1,30 @@
+<ion-view view-title="Poems">
+  <ion-content>
+  	<div class="list list-inset">
+		<label class="item item-input">
+		<input type="text" placeholder="Add new poem.." ng-model="poem">
+		</label>
+		<button class="button button-block button-positive" ng-click="addPoem(poem)">
+			Add Poem
+		</button>
+    </div>	   
+	<ion-list can-swipe="listCanSwipe">
+	  <ion-item ng-repeat="poem in poems" class="item item-text-wrap">
+	    <h2>{{poem.poem}}</h2>
+
+	    <ion-option-button class="button-positive"
+	                       ng-click="updatePopup(poem, 'Update')">
+	      <!-- Edit -->
+	      <i class="icon ion-edit"></i>
+	    </ion-option-button>
+ 
+	    <ion-option-button class="button-assertive"
+	                       ng-click="deletePoem($index, poem.poem_id)">	      
+	      <!-- Delete -->
+	      <i class="icon ion-trash-a"></i>
+	    </ion-option-button>
+
+	  </ion-item>
+	</ion-list>
+  </ion-content>
+</ion-view>
