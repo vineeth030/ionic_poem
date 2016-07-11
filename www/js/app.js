@@ -4,9 +4,36 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'satellizer'])
+angular.module('starter', ['ionic', 'starter.controllers', 'satellizer','permission'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $rootScope, $auth, $state, Permission) {
+
+  $rootScope.logout = function() {
+    $auth.logout().then(function() {
+      localStorage.removeItem('user');
+      $rootScope.currentUser = null;
+      $state.go('app.auth');
+    });
+  }
+
+  $rootScope.currentUser = JSON.parse(localStorage.getItem('user'));
+
+  Permission
+  .defineRole('anonymous',function(stateParams) {
+    if (!$auth.isAuthenticated()) {
+      return true;
+    }
+    return false;
+  })
+  .defineRole('isloggedin',function(stateParams) {
+    if($auth.isAuthenticated()){
+      return true;
+    }
+    return false;
+  });
+
+
+
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -28,7 +55,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'satellizer'])
 
   $stateProvider
 
-    .state('app', {
+  .state('app', {
     url: '/app',
     abstract: true,
     templateUrl: 'templates/menu.html',
@@ -72,25 +99,37 @@ angular.module('starter', ['ionic', 'starter.controllers', 'satellizer'])
     }
   })
 
-    .state('app.auth',{
-      url:'/auth',
-      views: {
-        'menuContent':{
-          templateUrl:'templates/login.html',
-          controller:'AuthCtrl'
-        }
+  .state('app.auth',{
+    url:'/auth',
+    data:{
+      'permissions':{
+        except:['isloggedin'],
+        redirectTo:'app.poems'
       }
-    })
+    },
+    views: {
+      'menuContent':{
+        templateUrl:'templates/login.html',
+        controller:'AuthCtrl'
+      }
+    }
+  })
 
-    .state('app.poems',{
-      url:'/poems',
-      views:{
-        'menuContent':{
-          templateUrl:'templates/poems.html',
-          controller:'PoemsCtrl'
-        }
+  .state('app.poems',{
+    url:'/poems',
+    data:{
+      'permissions':{
+        except:['anonymous'],
+        redirectTo:'app.auth'
       }
-    })
+    },
+    views:{
+      'menuContent':{
+        templateUrl:'templates/poems.html',
+        controller:'PoemsCtrl'
+      }
+    }
+  })
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/poems');
 });

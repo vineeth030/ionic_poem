@@ -18,11 +18,15 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item class="item-icon-left" nav-clear menu-close ui-sref="app.auth">
+        <ion-item class="item-icon-left" nav-clear menu-close ui-sref="app.auth" ng-show="!currentUser">
           <i class="icon ion-log-in"></i>
           <h2>Login</h2>
         </ion-item>
-        <ion-item class="item-icon-left" nav-clear menu-close ui-sref="app.poems">
+        <ion-item class="item-icon-left" nav-clear menu-close ng-click="logout()" ng-show="currentUser">
+          <i class="icon ion-log-in"></i>
+          <h2>Logout</h2>
+        </ion-item>
+        <ion-item class="item-icon-left" nav-clear menu-close ui-sref="app.poems" ng-show="currentUser">
           <i class="icon ion-paper-airplane"></i>
           <h2>Poems</h2>
         </ion-item>
